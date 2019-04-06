@@ -14,7 +14,15 @@ xmlParser.parseString(fileContents, (_, data) => {
       console.log(title);
 
       const content = item['content:encoded'];
-      const contentMarkdown = turndown.turndown(content);
+      const fixedContent = content
+        .split('\n')
+        .map((line) => {
+          if (line.trim() === '') return '';
+          if (line.startsWith('[')) return line;
+          return `<p>${line}</p>`;
+        })
+        .join('');
+      const contentMarkdown = turndown.turndown(fixedContent);
       console.log(contentMarkdown);
 
       console.log('');
