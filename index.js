@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-const fs = require('fs');
-const xml2js = require('xml2js');
-const TurndownService = require('turndown');
+import { readFileSync } from 'fs';
+import { Parser } from 'xml2js';
+import TurndownService from 'turndown';
 
 const turndown = new TurndownService();
 const parsePost = (post) => {
@@ -22,8 +22,8 @@ const parsePost = (post) => {
   };
 };
 
-const xmlParser = new xml2js.Parser({ explicitArray: false });
-const fileContents = fs.readFileSync('wordpress_dump.xml');
+const xmlParser = new Parser({ explicitArray: false });
+const fileContents = readFileSync('wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
   const { channel } = data.rss;
   channel.item.forEach((item) => {
