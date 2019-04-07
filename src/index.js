@@ -5,9 +5,8 @@ import TurndownService from 'turndown';
 
 const turndown = new TurndownService();
 const parsePost = (post) => {
-  const { title } = post;
-  const content = post['content:encoded'];
-  const fixedContent = content
+  const { title, 'wp:post_date_gmt': date, 'content:encoded': rawContent } = post;
+  const fixedContent = rawContent
     .split('\n')
     .map((line) => {
       if (line.trim() === '') return '';
@@ -15,10 +14,11 @@ const parsePost = (post) => {
       return `<p>${line}</p>`;
     })
     .join('');
-  const contentMarkdown = turndown.turndown(fixedContent);
+  const content = turndown.turndown(fixedContent);
   return {
     title,
-    content: contentMarkdown,
+    date,
+    content,
   };
 };
 
@@ -30,7 +30,11 @@ xmlParser.parseString(fileContents, (_, data) => {
   posts.forEach((p) => {
     const post = parsePost(p);
     console.log(post.title);
+    console.log(post.date);
+    console.log('');
     console.log(post.content);
+    console.log('');
+    console.log('---');
     console.log('');
   });
 });
