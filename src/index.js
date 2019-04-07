@@ -1,28 +1,9 @@
 /* eslint-disable no-console */
 import { readFileSync } from 'fs';
-import { Parser } from 'xml2js';
-import TurndownService from 'turndown';
+import { Parser as XmlParser } from 'xml2js';
+import { parsePost } from './parser';
 
-const turndown = new TurndownService();
-const parsePost = (post) => {
-  const { title, 'wp:post_date_gmt': date, 'content:encoded': rawContent } = post;
-  const fixedContent = rawContent
-    .split('\n')
-    .map((line) => {
-      if (line.trim() === '') return '';
-      if (line.startsWith('[')) return line;
-      return `<p>${line}</p>`;
-    })
-    .join('');
-  const content = turndown.turndown(fixedContent);
-  return {
-    title,
-    date,
-    content,
-  };
-};
-
-const xmlParser = new Parser({ explicitArray: false });
+const xmlParser = new XmlParser({ explicitArray: false });
 const fileContents = readFileSync('wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
   const { channel } = data.rss;
