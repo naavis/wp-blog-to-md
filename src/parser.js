@@ -2,6 +2,15 @@ import TurndownService from 'turndown';
 
 const turndown = new TurndownService();
 
+const parseAttachment = (rawAttachment) => {
+  const {
+    'wp:attachment_url': url,
+    'wp:post_id': id,
+    'excerpt:encoded': caption,
+  } = rawAttachment;
+  return { id, url, caption };
+};
+
 const parseImageLineTitle = (line) => {
   // Parse title from the caption attribute of the caption tag
   const captionTagTitleRegex = /caption="(.+?)"/;
@@ -59,4 +68,9 @@ const parsePost = (post) => {
   return { title, date, content };
 };
 
-export { parseImageLine, parsePost, parseImageLineTitle };
+export {
+  parseImageLine,
+  parsePost,
+  parseImageLineTitle,
+  parseAttachment,
+};

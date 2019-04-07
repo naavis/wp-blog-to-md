@@ -1,15 +1,22 @@
 /* eslint-disable no-console */
 import { readFileSync } from 'fs';
 import { Parser as XmlParser } from 'xml2js';
-import { parsePost } from './parser';
+import { parsePost, parseAttachment } from './parser';
 
 const xmlParser = new XmlParser({ explicitArray: false });
 const fileContents = readFileSync('wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
-  const { channel } = data.rss;
-  const posts = channel.item.filter(i => i['wp:post_type'] === 'post');
-  posts.forEach((p) => {
-    const post = parsePost(p);
+  const { item: items } = data.rss.channel;
+
+  const attachments = items
+    .filter(i => i['wp:post_type'] === 'attachment')
+    .map(a => parseAttachment(a));
+
+  const posts = items
+    .filter(i => i['wp:post_type'] === 'post')
+    .map(p => parsePost(p));
+
+  posts.forEach((post) => {
     console.log(post.title);
     console.log(post.date);
     console.log('');
