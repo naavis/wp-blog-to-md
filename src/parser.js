@@ -38,19 +38,23 @@ const parsePost = (post) => {
   const { title, 'wp:post_date_gmt': date, 'content:encoded': rawContent } = post;
   const fixedContent = rawContent
     .split('\n')
+    .filter(l => l.trim() !== '')
     .map((line) => {
       if (line.trim() === '') return '';
+
       if (line.startsWith('[caption')) {
         const image = parseImageLine(line);
         return `<img src="${image.url}" title="${image.title}" />`;
       }
+
       if (line.startsWith('[gallery')) {
         // TODO: Handle galleries
         return line;
       }
+
       return `<p>${line}</p>`;
     })
-    .join('');
+    .join('\n');
   const content = turndown.turndown(fixedContent);
   return { title, date, content };
 };
