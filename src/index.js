@@ -26,12 +26,11 @@ const xmlParser = new Parser({ explicitArray: false });
 const fileContents = readFileSync('wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
   const { channel } = data.rss;
-  channel.item.forEach((item) => {
-    if (item['wp:post_type'] === 'post') {
-      const post = parsePost(item);
-      console.log(post.title);
-      console.log(post.content);
-      console.log('');
-    }
+  const posts = channel.item.filter(i => i['wp:post_type'] === 'post');
+  posts.forEach((p) => {
+    const post = parsePost(p);
+    console.log(post.title);
+    console.log(post.content);
+    console.log('');
   });
 });
