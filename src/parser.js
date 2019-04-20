@@ -81,7 +81,7 @@ const parsePost = (post, attachments) => {
     })
     .join('\n');
   const content = turndown.turndown(fixedContent);
-  return { title, date, content };
+  return { title, date: new Date(`${date} GMT`), content };
 };
 
 export {
