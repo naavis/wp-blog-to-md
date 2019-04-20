@@ -13,7 +13,13 @@ const preparePostForOutput = (post) => {
 
   const path = `output/${year}/${month}`;
 
-  const sanitizedTitle = post.title.replace(/\s+/, '-').toLowerCase();
+  const sanitizedTitle = post.title
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/\./g, '_')
+    .replace(/ä/g, 'a')
+    .replace(/ö/g, 'o');
+
   const filename = `${year}-${month}-${day}-${sanitizedTitle}.md`;
   const contentsWithRelativeLinks = post.content.replace(
     /http[s]?:\/\/astronaavis.files.wordpress.com\//g,
