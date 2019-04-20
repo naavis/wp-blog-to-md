@@ -66,7 +66,7 @@ const parsePost = (post, attachments) => {
 
       if (line.startsWith('[caption')) {
         const image = parseImageLine(line);
-        return `<img src="${image.url}" title="${image.title}" />`;
+        return `<img src="${image.url}" title="${image.title}" /><br/>`;
       }
 
       if (line.startsWith('[gallery')) {

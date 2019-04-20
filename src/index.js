@@ -23,7 +23,7 @@ const preparePostForOutput = (post) => {
   const filename = `${year}-${month}-${day}-${sanitizedTitle}.md`;
   const contentsWithRelativeLinks = post.content.replace(
     /http[s]?:\/\/astronaavis.files.wordpress.com\//g,
-    '../../',
+    './../../',
   );
 
   const postContents = `---
