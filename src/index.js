@@ -15,12 +15,16 @@ const preparePostForOutput = (post) => {
 
   const sanitizedTitle = post.title.replace(/\s+/, '-').toLowerCase();
   const filename = `${year}-${month}-${day}-${sanitizedTitle}.md`;
+  const contentsWithRelativeLinks = post.content.replace(
+    /http[s]?:\/\/astronaavis.files.wordpress.com\//g,
+    '../../',
+  );
 
   const postContents = `---
 title: ${post.title}
 date: ${post.date.toISOString()}
 ---
-${post.content}`;
+${contentsWithRelativeLinks}`;
 
   return { path, filename, postContents };
 };
