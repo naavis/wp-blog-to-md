@@ -12,7 +12,7 @@ xmlParser.parseString(fileContents, (_, data) => {
     .filter(i => i['wp:post_type'] === 'attachment')
     .map(a => parseAttachment(a));
 
-  const posts = items.filter(i => i['wp:post_type'] === 'post').map(p => parsePost(p));
+  const posts = items.filter(i => i['wp:post_type'] === 'post').map(p => parsePost(p, attachments));
 
   posts.forEach((post) => {
     console.log(post.title);

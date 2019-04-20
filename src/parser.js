@@ -5,9 +5,10 @@ const turndown = new TurndownService();
 const parseAttachment = (rawAttachment) => {
   const {
     'wp:attachment_url': url,
-    'wp:post_id': id,
+    'wp:post_id': idStr,
     'excerpt:encoded': caption,
   } = rawAttachment;
+  const id = Number(idStr);
   return { id, url, caption };
 };
 
@@ -43,7 +44,19 @@ const parseImageLine = (line) => {
   return { title, url };
 };
 
-const parsePost = (post) => {
+const parseGalleryLine = (line) => {
+  const idsRegex = /ids="([\d,]+)"/;
+  const ids = line
+    .match(idsRegex)[1]
+    .trim()
+    .split(',')
+    .map(Number);
+  return {
+    ids,
+  };
+};
+
+const parsePost = (post, attachments) => {
   const { title, 'wp:post_date_gmt': date, 'content:encoded': rawContent } = post;
   const fixedContent = rawContent
     .split('\n')
@@ -57,8 +70,11 @@ const parsePost = (post) => {
       }
 
       if (line.startsWith('[gallery')) {
-        // TODO: Handle galleries
-        return line;
+        const attachmentIds = parseGalleryLine(line).ids;
+        const relatedAttachments = attachments.filter(a => attachmentIds.includes(a.id));
+        return relatedAttachments
+          .map(a => `<img src="${a.url}" title="${a.caption}" />`)
+          .join('<br />');
       }
 
       return `<p>${line}</p>`;
@@ -69,8 +85,5 @@ const parsePost = (post) => {
 };
 
 export {
-  parseImageLine,
-  parsePost,
-  parseImageLineTitle,
-  parseAttachment,
+  parseImageLine, parsePost, parseImageLineTitle, parseAttachment, parseGalleryLine,
 };

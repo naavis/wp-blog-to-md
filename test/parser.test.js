@@ -1,4 +1,4 @@
-import { parseImageLineTitle, parseImageLine } from '../src/parser';
+import { parseImageLineTitle, parseImageLine, parseGalleryLine } from '../src/parser';
 
 const lineWithImgTag = '[caption id="attachment_1602" align="alignnone" width="1200"]<img class="alignnone size-full wp-image-1602" src="https://astronaavis.files.wordpress.com/2018/08/lentokone-teide-lahto.jpg" alt="lentokone-teide-lahto" width="1200" height="900" /> Lähtiessä Teneriffalta pilviä oli huomattavasti vähemmän kuin tullessa.[/caption]';
 const lineWithImgAndATag = '[caption id="attachment_156" align="aligncenter" width="500"]<a href="http://astronaavis.files.wordpress.com/2012/10/img_2815.jpg"><img class=" wp-image-156 " title="akuo-huussi" alt="" src="http://astronaavis.files.wordpress.com/2012/10/img_2815.jpg?w=300" width="500" /></a> Havaintosuoja ennen muunnosprojektia. Kuva: Lauri Kangas[/caption]';
@@ -46,7 +46,16 @@ describe('parseImageLine', () => {
     const result = parseImageLine(lineWithTitleInCaptionTag);
     expect(result).toEqual({
       title: 'Ion ja Ganymedeen ylikulku',
-      url: 'http://www.ursa.fi/%7Esavuori/astro/2011_10_31-kaivopuisto/2011_10_31-jupiter_double_transit.gif',
+      url:
+        'http://www.ursa.fi/%7Esavuori/astro/2011_10_31-kaivopuisto/2011_10_31-jupiter_double_transit.gif',
     });
+  });
+});
+
+describe('parseGalleryLine', () => {
+  it('parses correct ids from gallery line', () => {
+    const galleryLine = '[gallery ids="123,456,789" type="rectangular"]';
+    const result = parseGalleryLine(galleryLine);
+    expect(result).toEqual({ ids: [123, 456, 789] });
   });
 });
