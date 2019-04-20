@@ -3,6 +3,28 @@ import { readFileSync, mkdirSync, writeFileSync } from 'fs';
 import { Parser as XmlParser } from 'xml2js';
 import { parsePost, parseAttachment } from './parser';
 
+const preparePostForOutput = (post) => {
+  const year = post.date.getUTCFullYear();
+  const month = (post.date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = post.date
+    .getUTCDate()
+    .toString()
+    .padStart(2, '0');
+
+  const path = `output/${year}/${month}`;
+
+  const sanitizedTitle = post.title.replace(/\s+/, '-').toLowerCase();
+  const filename = `${year}-${month}-${day}-${sanitizedTitle}.md`;
+
+  const postContents = `---
+title: ${post.title}
+date: ${post.date.toISOString()}
+---
+${post.content}`;
+
+  return { path, filename, postContents };
+};
+
 const xmlParser = new XmlParser({ explicitArray: false });
 const fileContents = readFileSync('wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
@@ -15,20 +37,9 @@ xmlParser.parseString(fileContents, (_, data) => {
   const posts = items.filter(i => i['wp:post_type'] === 'post').map(p => parsePost(p, attachments));
 
   posts.forEach((post) => {
-    const year = post.date.getUTCFullYear();
-    const month = (post.date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const day = post.date
-      .getUTCDate()
-      .toString()
-      .padStart(2, '0');
-    const path = `output/${year}/${month}`;
+    const { path, filename, postContents } = preparePostForOutput(post);
+
     mkdirSync(path, { recursive: true });
-
-    const title = post.title.replace(/\s+/, '-');
-    const filename = `${year}-${month}-${day}-${title}.md`;
-
-    // TODO: Write metadata information to start of file
-
-    writeFileSync(`${path}/${filename}`, post.content);
+    writeFileSync(`${path}/${filename}`, postContents);
   });
 });
