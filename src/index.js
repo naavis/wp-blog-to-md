@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { readFileSync } from 'fs';
+import { readFileSync, mkdirSync, writeFileSync } from 'fs';
 import { Parser as XmlParser } from 'xml2js';
 import { parsePost, parseAttachment } from './parser';
 
@@ -15,12 +15,20 @@ xmlParser.parseString(fileContents, (_, data) => {
   const posts = items.filter(i => i['wp:post_type'] === 'post').map(p => parsePost(p, attachments));
 
   posts.forEach((post) => {
-    console.log(post.title);
-    console.log(post.date);
-    console.log('');
-    console.log(post.content);
-    console.log('');
-    console.log('---');
-    console.log('');
+    const year = post.date.getUTCFullYear();
+    const month = (post.date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = post.date
+      .getUTCDate()
+      .toString()
+      .padStart(2, '0');
+    const path = `output/${year}/${month}`;
+    mkdirSync(path, { recursive: true });
+
+    const title = post.title.replace(/\s+/, '-');
+    const filename = `${year}-${month}-${day}-${title}.md`;
+
+    // TODO: Write metadata information to start of file
+
+    writeFileSync(`${path}/${filename}`, post.content);
   });
 });
