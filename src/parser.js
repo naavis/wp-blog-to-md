@@ -79,7 +79,8 @@ const parsePost = (post, attachments) => {
 
       return `<p>${line}</p>`;
     })
-    .join('\n');
+    .join('\n')
+    .replace(/http:/g, 'https:');
 
   const content = turndown.turndown(fixedContent);
   return { title, date: new Date(`${date} GMT`), content };
