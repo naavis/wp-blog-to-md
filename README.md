@@ -7,7 +7,7 @@ Markdown.
 
 Place Wordpress export XML file in the following place with the following name:
 `input/wordpress_dump.xml` and place all images from the media export to
-`input/media/`. They should have subfolders such as `2018/11/`, `2019/03` etc.
+`input/media/`. They should have subfolders such as `2018/11/`, `2019/03/` etc.
 
 Then run:
 
