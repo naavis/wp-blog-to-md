@@ -11,7 +11,7 @@ const preparePostForOutput = (post) => {
     .toString()
     .padStart(2, '0');
 
-  const path = `output/${year}/${month}`;
+  const path = 'output';
 
   const sanitizedTitle = post.title
     .toLowerCase()
@@ -36,7 +36,7 @@ ${contentsWithRelativeLinks}`;
 };
 
 const xmlParser = new XmlParser({ explicitArray: false });
-const fileContents = readFileSync('wordpress_dump.xml');
+const fileContents = readFileSync('input/wordpress_dump.xml');
 xmlParser.parseString(fileContents, (_, data) => {
   const { item: items } = data.rss.channel;
 
